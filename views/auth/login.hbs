@@ -1,0 +1,33 @@
+<div class="auth">
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a class="active" href="#login">Login</a></li>
+        <li class="tab col s3"><a href="#register">Registration</a></li>
+      </ul>
+    </div>
+    <div id="login" class="col s6 offset-s3">
+        {{#if loginError}}
+            <p class="alert">{{loginError}}</p>
+        {{/if}}
+        <h1>Sign in</h1>
+        <form action="/auth/login" method="POST">
+            <div class="input-field">
+                <input id="login" name="login" type="text" class="validate" required>
+                <label for="login">Login</label>
+                <span class="helper-text" data-error="input login"></span>
+            </div>
+
+            <div class="input-field">
+                <input id="password" name="password" type="password" class="validate" required>
+                <label for="password">Password</label>
+                <span class="helper-text" data-error="input password"></span>
+            </div>
+
+            <input type="hidden" name="_csrf" value="{{csrf}}">
+
+            <button class="btn btn-primary" type="submit">Sign in</button>
+        </form>
+    </div>
+  </div>
+</div>
