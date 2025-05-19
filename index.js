@@ -5,6 +5,8 @@ const flash = require('connect-flash')
 const helmet = require('helmet')
 const compression = require('compression')
 const session = require('express-session')
+const pgSession = require('connect-pg-simple')(session)
+const pool = require('./db')
 const { engine } = require('express-handlebars')
 const homeRoutes = require('./routes/home')
 const moderatorRoutes = require('./routes/moderator')
@@ -37,9 +39,14 @@ const imagesDir = path.join(`C:/Users/Heaven/Desktop/Coursa4/TestOtherDBConnecti
 app.use('/images', express.static(imagesDir))
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
-    secret: keys.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
+  store: new pgSession({
+    pool: pool,
+    tableName: 'user_sessions' 
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }))
 app.use(csrf())
 app.use(flash())
