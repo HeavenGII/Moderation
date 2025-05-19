@@ -4,25 +4,23 @@
   
   <nav>
     <div class="nav-wrapper">
-      <a href="/" class="brand-logo">Поиск Работы ;)</a>
+      <a href="/home" class="brand-logo">Поиск Работы ;)</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         {{#if isHome}}
-          <li class="active"><a href="/">Главная</a></li>
+          <li class="active"><a href="/home">Главная</a></li>
         {{else}}
-          <li><a href="/">Главная</a></li>
+          <li><a href="/home">Главная</a></li>
         {{/if}}
 
 
 
         {{#if isAuth}}
-          <li><a href="/addModerator">Добавить модератора</a></li>
+          {{#if user.isAdmin}}
+          <li><a href="/moderator">Добавить модератора</a></li>
+          {{else}}
+          {{/if}}
             <li><a href="/auth/logout">Log out</a></li>
         {{else}}
-          {{#if isVacancies}}
-            <li class="active"><a href="/vacancies">Вакансии</a></li>
-            {{else}}
-            <li><a href="/vacancies">Вакансии</a></li>
-          {{/if}}
           {{#if isLogin}}
             <li class="active"><a href="/auth/login#login">Login</a></li>
           {{else}}

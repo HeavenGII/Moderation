@@ -1,0 +1,211 @@
+<div class="vacancy-container">
+  <!-- Шапка вакансии -->
+  <div class="vacancy-header">
+    <div class="vacancy-title-block">
+      <h1 class="vacancy-title">{{vacancy.title}}</h1>
+      <div class="vacancy-salary">{{vacancy.salary}} BYN</div>
+    </div>
+    
+    <div class="vacancy-actions">
+      {{#if isLogin}}
+      <form action="/vacancies/reply" method="POST" class="vacancy-form">
+        <input type="hidden" name="id" value="{{vacancy.vacancyid}}">
+        <input type="hidden" name="_csrf" value="{{csrf}}">
+        <button class="btn btn-primary btn-respond">Откликнуться</button>
+      </form>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Основная информация -->
+  <div class="vacancy-info">
+    <div class="vacancy-meta">
+      <div class="meta-item">
+        <i class="material-icons">business</i>
+        <span>{{vacancy.company}}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">location_on</i>
+        <span>{{vacancy.location}}</span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">work</i>
+        <span>
+          {{#ifeq vacancy.employment_type 'FULL'}}Полная занятость{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'PART'}}Частичная занятость{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'REMOTE'}}Удалённая работа{{/ifeq}}
+          {{#ifeq vacancy.employment_type 'INTERN'}}Стажировка{{/ifeq}}
+        </span>
+      </div>
+      
+      <div class="meta-item">
+        <i class="material-icons">timeline</i>
+        <span>
+          {{#ifeq vacancy.experience 'no'}}Без опыта{{/ifeq}}
+          {{#ifeq vacancy.experience '1-3'}}1-3 года{{/ifeq}}
+          {{#ifeq vacancy.experience '3-5'}}3-5 лет{{/ifeq}}
+          {{#ifeq vacancy.experience '5+'}}Более 5 лет{{/ifeq}}
+          {{#unless vacancy.experience}}Не имеет значения{{/unless}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Контент вакансии -->
+    <div class="vacancy-content">
+      <section class="content-section">
+        <h2><i class="material-icons">description</i> Описание вакансии</h2>
+        <div class="content-text">{{vacancy.description}}</div>
+      </section>
+
+      <section class="content-section">
+        <h2><i class="material-icons">list_alt</i> Требования</h2>
+        <div class="content-text">{{vacancy.requirements}}</div>
+      </section>
+
+      {{#if vacancy.benefits}}
+      <section class="content-section">
+        <h2><i class="material-icons">card_giftcard</i> Условия и бонусы</h2>
+        <div class="content-text">{{vacancy.benefits}}</div>
+      </section>
+      {{/if}}
+
+      <section class="content-section contact-section">
+        <h2><i class="material-icons">email</i> Контакты</h2>
+        <div class="contact-info">
+          <p><strong>Email для откликов:</strong> 
+            <a href="mailto:{{vacancy.contact_email}}">{{vacancy.contact_email}}</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Основные стили */
+  .vacancy-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  /* Шапка вакансии */
+  .vacancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .vacancy-title-block {
+    flex: 1;
+  }
+
+  .vacancy-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+  }
+
+  .vacancy-salary {
+    font-size: 24px;
+    font-weight: 700;
+    color: #27ae60;
+  }
+
+  /* Кнопки действий */
+  .vacancy-actions {
+    margin-left: 20px;
+  }
+
+  .btn-respond {
+    background: #3498db;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .btn-respond:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
+  }
+
+  /* Мета-информация */
+  .vacancy-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    color: #34495e;
+    font-size: 16px;
+  }
+
+  .meta-item i {
+    margin-right: 8px;
+    color: #7f8c8d;
+    font-size: 20px;
+  }
+
+  /* Контентные секции */
+  .content-section {
+    margin-bottom: 30px;
+  }
+
+  .content-section h2 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+  .content-section h2 i {
+    margin-right: 10px;
+    color: #3498db;
+  }
+
+  .content-text {
+    line-height: 1.7;
+    color: #34495e;
+    white-space: pre-line;
+  }
+
+  /* Контактная секция */
+  .contact-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .contact-info {
+    font-size: 16px;
+  }
+
+  .contact-info a {
+    color: #3498db;
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+</style>

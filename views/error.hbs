@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <style>
+    .error-container {
+      margin-top: 50px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container error-container">
+    <div class="card-panel red lighten-4">
+      <h4>{{title}}</h4>
+      <p>{{message}}</p>
+      {{#if error}}
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">{{error.stack}}</pre>
+      {{/if}}
+      <a href="/" class="btn waves-effect waves-light">На главную</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

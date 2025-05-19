@@ -1,12 +1,9 @@
 const { Router } = require('express')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
-const { validationResult } = require('express-validator')
-const User = require('../models/administrator')
+const db = require('../db')
 require('dotenv').config()
-const {registerValidators} =require('../utils/validators')
 const router = Router()
-
 
 
 router.get('/login', async (req, res) => {
@@ -15,63 +12,68 @@ router.get('/login', async (req, res) => {
         isLogin: true,
         loginError: req.flash('loginError'),
         registerError: req.flash('registerError')
-    });
-});
-
-router.get('/logout', async (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/auth/login#login');
-    });
-});
+    })
+})
 
 router.post('/login', async (req, res) => {
     try {
-        const { login, password } = req.body;
-        const candidate = await User.findOne({ login });
-
-        if (candidate) {
-            const areSame = await bcrypt.compare(password, candidate.password);
-
-            if (areSame) {
-                req.session.user = candidate;
-                req.session.isAuthenticated = true;
-                req.session.save((err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    res.redirect('/');
-                });
-            } else {
-                req.flash('loginError', 'Incorrect password');
-                res.redirect('/auth/login#login');
-            }
+        const { login, password } = req.body
+        
+        let queryResult = await db.query(
+            'SELECT * FROM Administrator WHERE login = $1', 
+            [login]
+        )
+        
+        let user
+        if (queryResult.rows.length > 0) {
+            user = queryResult.rows[0]
+            user.isAdmin = true
         } else {
-            req.flash('loginError', 'User does not exist');
-            res.redirect('/auth/login#login');
+            queryResult = await db.query(
+                'SELECT * FROM Moderator WHERE login = $1', 
+                [login]
+            )
+            if (queryResult.rows.length === 0) {
+                req.flash('loginError', 'User does not exist')
+                return res.redirect('/auth/login#login')
+            }
+            user = queryResult.rows[0]
+            user.isModerator = true
         }
-    } catch (e) {
-        console.log(e);
-    }
-});
 
-router.post('/register', registerValidators, async (req, res) => {
-    try {
-        const { login, password } = req.body;
-
-        const errors = validationResult(req)
-        if(!errors.isEmpty()){
-            req.flash('registerError', errors.array()[0].msg)
-            return res.status(422).redirect('/auth/login#register')
+        const passwordMatch = await bcrypt.compare(password, user.password)
+        if (!passwordMatch) {
+            req.flash('loginError', 'Incorrect password')
+            return res.redirect('/auth/login#login')
         }
-        const hashPassword = await bcrypt.hash(password, 10);
-        const user = new User({
-        login, password: hashPassword
-        });
-        await user.save();
-        res.redirect('/auth/login#login');
-    } catch (e) {
-        console.log(e);
+        
+        req.session.user = {
+            id: user.id,
+            login: user.login,
+            isAdmin: user.isAdmin || false,
+            isModerator: user.isModerator || false 
+        }
+        req.session.isAuthenticated = true;
+        
+        req.session.save(err => {
+            if (err) {
+                console.error('Session save error:', err)
+                return res.status(500).send('Session error')
+            }
+            res.redirect('/home');
+        })
+        
+    } catch (err) {
+        console.error('Login error:', err)
+        req.flash('loginError', 'Login failed')
+        res.redirect('/auth/login#login')
     }
-});
+})
 
-module.exports = router;
+router.get('/logout', async (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/auth/login#login')
+    })
+})
+
+module.exports = router
