@@ -3,7 +3,6 @@
     <div class="col s12">
       <ul class="tabs" style="margin: 10px">
         <li class="tab col s3"><a class="active" href="#login">Login</a></li>
-        <li class="tab col s3"><a href="#register">Registration</a></li>
       </ul>
     </div>
     <div id="login" class="col s6 offset-s3">
@@ -27,34 +26,6 @@
             <input type="hidden" name="_csrf" value="{{csrf}}">
 
             <button class="btn btn-primary" type="submit">Войти</button>
-        </form>
-    </div>
-    <div id="register" class="col s6 offset-s3" style="display:none;">
-        {{#if registerError}}
-            <p class="alert">{{registerError}}</p>
-        {{/if}}
-        <h1>Registration</h1>
-        <form action="/auth/register" method="POST" novalidate>
-            <div class="input-field">
-                <input id="login" name="login" type="text" class="validate" required>
-                <label for="login">Login</label>
-                <span class="helper-text" data-error="input login"></span>
-            </div>
-
-            <div class="input-field">
-                <input id="rpassword" name="password" type="password" class="validate" required>
-                <label for="rpassword">Password</label>
-                <span class="helper-text" data-error="input password"></span>
-            </div>
-
-            <div class="input-field">
-                <input id="confirm" name="confirm" type="password" class="validate" required>
-                <label for="confirm">Password again</label>
-                <span class="helper-text" data-error="input password"></span>
-            </div>
-            <input type="hidden" name="_csrf" value="{{csrf}}">            
-
-            <button class="btn btn-primary" type="submit">Register</button>
         </form>
     </div>
   </div>
