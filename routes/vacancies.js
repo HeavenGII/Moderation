@@ -82,7 +82,7 @@ router.post('/:id/approve', auth, async (req, res) => {
             await transporter.sendMail(mailOptions)
         }
 
-        res.redirect('/home')
+        res.redirect('/home#vacancies')
     } catch (e) {
         console.error('Ошибка при подтверждении вакансии:', e)
         req.flash('error', 'Ошибка при подтверждении вакансии')
